@@ -1,17 +1,10 @@
 #Public Modules
-import discord
-import random
-import os
 import json
-import time
-import math
-import asyncio
-import re
-import urllib.request
-
-#Local Modules
+import os
+import discord
 import src.lib.essentials.commandHandler as commandHandler
-import src.create as create
+import src.lib.essentials.create as create
+
 create.create()
 
 client = discord.Client()
@@ -51,4 +44,5 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
-client.run('Mjk3NTg4ODg2MzMzNTU0Njkw.C8DAoA.cD5bR5QA_Fo6-t3WyzUOosBRI_A')
+client.run('removed')
+# Always change token to removed when committing
