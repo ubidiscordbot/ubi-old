@@ -2,6 +2,7 @@ import src.lib.modules.memes
 import src.lib.modules.comics
 import src.lib.modules.plusplus
 import src.lib.modules.flipcoin
+import src.lib.modules.calc
 import src.lib.runtimes.games.mathwars
 import src.lib.runtimes.games.reaction
 import src.lib.runtimes.games.scrabble
@@ -30,3 +31,5 @@ def handle(payload):
         return ["Single", src.lib.modules.plusplus.main_stats(payload)]
     elif payload.content.lower().startswith("$++") or payload.content.lower().startswith("$--"):
         return ["Single", src.lib.modules.plusplus.main_alter(payload)]
+    elif payload.content.lower().startswith("$calc "):
+        return ["Single", src.lib.modules.calc.main(payload)]
