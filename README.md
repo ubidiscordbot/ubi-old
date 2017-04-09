@@ -7,7 +7,8 @@
 ###### 1. $flipcoin ~ flips a coin
 ###### 2. $comic ~ uploads a comic from xkcd
 ###### 3. $meme ~ uploads a meme from memes.com
-###### 4. $help ~ loads help page
+###### 4. calc (problem) ~ calculates a math problem in pemdas
+###### 5. $help ~ loads help page
 ##### Plus Plus commands
 ###### Plus Plus is a system built within ubi to award teammates with "points"
 ###### 1. $stats ~ gets a leaderboard of plus plus scores
