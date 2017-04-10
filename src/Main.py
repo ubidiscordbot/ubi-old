@@ -75,4 +75,4 @@ async def on_ready():
     print('------')
 
 client.run('removed')
-# Always change token to removed when committing :)
+# Always change token to removed when committing
