@@ -33,3 +33,5 @@ def handle(payload):
         return ["Single", src.lib.modules.plusplus.main_alter(payload)]
     elif payload.content.lower().startswith("$calc "):
         return ["Single", src.lib.modules.calc.main(payload)]
+    elif payload.content.lower().startswith("$scrabble"):
+        return ["Socket", "Scrabble"]
