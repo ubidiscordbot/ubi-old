@@ -92,30 +92,36 @@ class Main:
             await self.client.send_message(self.message.channel, "```Scrabble!```")
             current_round = 1
             leaderboard = []
-            while True:
+            self.received = []
+            while current_round <= 15:
                 q = form_question()
                 await self.client.send_message(self.message.channel, "```Round " + str(current_round) + "\n\nLetters: "
-                                               + q[1])
+                                               + q[1] + "```")
                 round_start = get_second()
                 while round_start + 30 > get_second():
-                    if len(self.received) != 0:
+                    await asyncio.sleep(.01)
+                    if len(self.received) != 0 and self.received[0].author != self.client.user:
                         guess = convert_response(self.received[0].content)
                         obj = self.received[0]
                         self.received.pop(0)
                         if guess == q[2]:
                             await self.client.send_message(self.message.channel,
                                                            "```" + obj.author.name + " guessed " + q[2] +
-                                                           " and received " + q[0] + " points!")
+                                                           " and received " + str(q[0]) + " points!```")
                             f = False
+                            i2 = 0
                             for i in leaderboard:
                                 if i[0] == obj.author.name:
-                                    i[1] += q[0]
+                                    leaderboard[i2][1] += q[0]
                                     f = True
+                                    break
+                                i2 += 1
                             if not f:
                                 leaderboard.append([obj.author.name, q[0]])
                             final_string = "Leaderboard" + "\n\n" + 'Name' + " " * 14 + "Credits" + "\n\n"
                             n = form_new(leaderboard)
                             n.reverse()
+                            leaderboard = n
                             num = 0
                             for i in n:
                                 num += 1
@@ -124,15 +130,27 @@ class Main:
                             await self.client.send_message(self.message.channel, "```" + final_string + "```")
                             break
                         else:
-                            await self.client.send_message(self.message.channel, "``` That's not it " +
-                                                           self.received[0].author.name + ". Keep Trying!")
-                    await asyncio.sleep(0.01)
-                if round_start + 30 > get_second():
+                            await self.client.send_message(self.message.channel, "```That's not it " +
+                                                           obj.author.name + ". Keep Trying!```")
+                if round_start + 30 <= get_second():
                     await self.client.send_message(self.message.channel, "```Nobody guessed it, "
-                                                                         "the answer was: " + q[1] + "```")
+                                                                         "the answer was: " + q[2] + "```")
+                current_round += 1
             n = form_new(leaderboard)
             n.reverse()
-            await self.client.send_message(self.message.channel, "```Game Finished! The winner is: " + n[0][0] + "!")
+            if len(n) != 0:
+                if len(n) > 1:
+                    if n[0][1] != n[1][1]:
+                        await self.client.send_message(self.message.channel, "```Game Finished! The winner is: " +
+                                                       n[0][0] + "!```")
+                    else:
+                        await self.client.send_message(self.message.channel, "```Game Finished. Its a tie!```")
+                else:
+                    await self.client.send_message(self.message.channel, "```Game Finished! The winner is: " + n[0][0]
+                                                   + "!```")
+            else:
+                await self.client.send_message(self.message.channel, "```Game Finished. Nobody won```")
+
             self.obj.close_socket(self.message.server.id)
 
     def receive(self, payload):
