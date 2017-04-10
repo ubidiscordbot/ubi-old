@@ -118,7 +118,7 @@ class Main:
                                 i2 += 1
                             if not f:
                                 leaderboard.append([obj.author.name, q[0]])
-                            final_string = "Leaderboard" + "\n\n" + 'Name' + " " * 14 + "Credits" + "\n\n"
+                            final_string = "Leaderboard" + "\n\n" + 'Name' + " " * 14 + "Points" + "\n\n"
                             n = form_new(leaderboard)
                             n.reverse()
                             leaderboard = n
