@@ -15,6 +15,7 @@ def handle(payload):
         1. $flipcoin ~ flips a coin
         2. $comic ~ uploads a comic from xkcd
         3. $meme ~ uploads a meme from memes.com
+        4. $scrabble ~ starts a game of scrabble
     Plus Plus commands
         plus plus is a system built within ubi to award teammates with 'points'
         1. $stats ~ gets a leaderboard of plus plus scores
