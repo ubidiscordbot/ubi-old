@@ -1,0 +1,15 @@
+{
+  "name": "ubi-website",
+  "version": "1.0.0",
+  "description": "A website for Ubi with a full dashboard.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "MooShoe",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.2",
+    "expressjs": "^1.0.1"
+  }
+}
