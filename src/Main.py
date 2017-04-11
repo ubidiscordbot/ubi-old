@@ -83,5 +83,5 @@ async def on_ready():
     print('------')
 
 client.loop.create_task(con.main_runtime())
-client.run('Mjk3NTg4ODg2MzMzNTU0Njkw.C858lw.3hzlgdprcthWwqEdHPGuaoLdinA')
+client.run('removed')
 # Always change token to removed when committing
