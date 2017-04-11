@@ -43,19 +43,19 @@ class ConnectionRuntime():
                 if len(connection_data) == 2:
                     break
             i2 += 1
-        connection_data[0][1].new_connection(self, self.servers[1][1], 1)
-        connection_data[1][1].new_connection(self, self.servers[0][1], 0)
+        connection_data[0][1].new_connection(self, self.servers[1][1], 0)
+        connection_data[1][1].new_connection(self, self.servers[0][1], 1)
         while True:
             if len(self.incoming) != 0:
-                connection_data[self.incoming[1]][0].connection_receive(self.incoming[0])
+                connection_data[self.incoming[0][1]][1].connection_receive(self.incoming[0])
                 self.incoming.pop(0)
             if self.closed:
                 break
             await asyncio.sleep(.01)
 
     def incoming_append(self, payload):
-        print("Will I guess this works")
         self.incoming.append(payload)
+        print(payload)
 
     def close(self):
         self.closed = True
