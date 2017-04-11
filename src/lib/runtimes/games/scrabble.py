@@ -65,6 +65,7 @@ class Main:
         self.team = []
         self.connect = connect
         self.opid = "NAN"
+        self.other_team = []
     async def scrabble_runtime(self):
         await self.client.wait_until_ready()
         await self.client.send_message(self.message.channel, "```Welcome to Scrabble!```")
@@ -77,6 +78,8 @@ class Main:
             if len(self.received) == 1:
                 if self.received[0].content == "^1" or self.received[0].content == "^2":
                     break
+                else:
+                    self.received.pop(0)
         if second + 30 < get_second():
             await self.client.send_message(self.message.channel, "```Nobody started game, closing session```")
             self.obj.close_socket(self.message.server.id)
@@ -89,19 +92,20 @@ class Main:
                 await asyncio.sleep(.01)
                 if len(self.received) != 0:
                     if self.received[0].content == '^join':
-                        self.team.append(self.received[0].author.name)
+                        self.team.append(self.received[0].author)
                         await self.client.send_message(self.message.channel, "```" +
                                                        self.received[0].author.name + " has joined the team!```")
                         self.received.pop(0)
                     elif self.received[0].content == '^cancel':
+                        self.received.pop(0)
                         self.obj.close_socket(self.message.server.id)
                         break
                     elif self.received[0].content == "^start":
                         self.received.pop(0)
-                        if len(self.team) >= 1:
+                        if len(self.team) >= 2:
                             await self.client.send_message(self.message.channel,
                                                        "```Searching for opposing server```")
-                            self.connect.add_search(["Scrabble", self.message.server.id, self.message.server])
+                            self.connect.add_search(["Scrabble", self.message.server.id, self.message.server, self.team])
                             while True:
                                 if len(self.connection) != 0:
                                     await self.client.send_message(self.message.channel, "```Server found! \n\nOpposing server: " +
@@ -117,7 +121,7 @@ class Main:
                                         current_round = 1
                                         leaderboard = []
                                         self.received = []
-                                        while current_round <= 2:
+                                        while current_round <= 15:
                                             q = form_question()
                                             await self.client.send_message(self.message.channel, "```Round " + str(
                                                 current_round) + "\n\nLetters: "
@@ -128,61 +132,75 @@ class Main:
                                             round_start = get_second()
                                             while round_start + 30 > get_second():
                                                 await asyncio.sleep(.01)
-                                                if len(self.received) != 0 and self.received[0].author != self.client.user:
-                                                    if len(self.connection_receive_list) != 0:
-                                                        await self.client.send_message(self.message.channel,
-                                                                                       "```" + self.connection_receive_list[0][
-                                                                                           0].author.name + ": " +
-                                                                                       self.connection_receive_list[0][
-                                                                                           0].content + "```")
+                                                if len(self.received) != 0 and self.received[0].author \
+                                                        != self.client.user:
+                                                    if self.received[0].author in self.team or \
+                                                                    self.received[0].author in self.other_team:
 
-                                                    guess = convert_response(self.received[0].content)
-                                                    obj = self.received[0]
-                                                    self.received.pop(0)
-                                                    if guess == q[2]:
-                                                        await self.client.send_message(self.message.channel,
-                                                                                       "```" + obj.author.name + " guessed " +
-                                                                                       q[2] +
-                                                                                       " and received " + str(
-                                                                                           q[0]) + " points for their team!```")
-                                                        self.direct.incoming_append(["```" + obj.author.name + " guessed " +
-                                                                                       q[2] +
-                                                                                       " and received " + str(
-                                                                                           q[0]) + " points for their team!```", self.opid])
-                                                        f = False
-                                                        i2 = 0
-                                                        name = str(self.message.server)
-                                                        if obj.author.name not in self.team:
-                                                            name = str(self.connection[1])
-                                                        for i in leaderboard:
-                                                            if i[0] == name:
-                                                                leaderboard[i2][1] += q[0]
-                                                                f = True
-                                                                break
-                                                            i2 += 1
-                                                        if not f:
-                                                            leaderboard.append([name, q[0]])
-                                                        final_string = "Leaderboard" + "\n\n" + 'Name' + " " * 14 + "Points" + "\n\n"
-                                                        n = form_new(leaderboard)
-                                                        n.reverse()
-                                                        leaderboard = n
-                                                        num = 0
-                                                        for i in n:
-                                                            num += 1
-                                                            multi = 18 - len(i[0])
-                                                            final_string += str(num) + ". " + i[0] + " " * multi + str(
-                                                                i[1]) + "\n"
-                                                        await self.client.send_message(self.message.channel,
-                                                                                       "```" + final_string + "```")
+                                                        if len(self.connection_receive_list) != 0:
+                                                            await self.client.send_message(self.message.channel,
+                                                                                           "```" + self.connection_receive_list[0][
+                                                                                               0].author.name + ": " +
+                                                                                           self.connection_receive_list[0][
+                                                                                               0].content + "```")
 
-                                                        self.direct.incoming_append(["```" + final_string + "```", self.opid])
-                                                        break
+                                                        guess = convert_response(self.received[0].content)
+                                                        obj = self.received[0]
+                                                        self.received.pop(0)
+                                                        if guess == q[2]:
+                                                            await self.client.send_message(self.message.channel,
+                                                                                           "```" + obj.author.name + " guessed " +
+                                                                                           q[2] +
+                                                                                           " and received " + str(
+                                                                                               q[0]) + " points for their team!```")
+                                                            self.direct.incoming_append(["```" + obj.author.name + " guessed " +
+                                                                                           q[2] +
+                                                                                           " and received " + str(
+                                                                                               q[0]) + " points for their team!```", self.opid])
+                                                            f = False
+                                                            i2 = 0
+                                                            name = str(self.message.server)
+                                                            if obj.author.name not in self.team:
+                                                                name = str(self.connection[1])
+                                                            for i in leaderboard:
+                                                                if i[0] == name:
+                                                                    leaderboard[i2][1] += q[0]
+                                                                    f = True
+                                                                    break
+                                                                i2 += 1
+                                                            if not f:
+                                                                leaderboard.append([name, q[0]])
+                                                            final_string = "Leaderboard" + "\n\n" + 'Name' + " " * 14 + "Points" + "\n\n"
+                                                            n = form_new(leaderboard)
+                                                            n.reverse()
+                                                            leaderboard = n
+                                                            num = 0
+                                                            for i in n:
+                                                                num += 1
+                                                                multi = 18 - len(i[0])
+                                                                final_string += str(num) + ". " + i[0] + " " * multi + str(
+                                                                    i[1]) + "\n"
+                                                            await self.client.send_message(self.message.channel,
+                                                                                           "```" + final_string + "```")
+
+                                                            self.direct.incoming_append(["```" + final_string + "```", self.opid])
+                                                            break
+                                                        else:
+                                                            await self.client.send_message(self.message.channel,
+                                                                                           "```That's not it " +
+                                                                                           obj.author.name + ". Keep Trying!```")
+                                                            self.direct.incoming_append(["```That's not it " +
+                                                                                           obj.author.name + ". Keep Trying!```", self.opid])
                                                     else:
+                                                        obj = self.received[0]
+                                                        self.received.pop(0)
                                                         await self.client.send_message(self.message.channel,
-                                                                                       "```That's not it " +
-                                                                                       obj.author.name + ". Keep Trying!```")
-                                                        self.direct.incoming_append(["```That's not it " +
-                                                                                       obj.author.name + ". Keep Trying!```", self.opid])
+                                                                                       "```" +
+                                                                                       obj.author.name + " is not in a team, therefore cant participate until a new game is created```")
+                                                        self.direct.incoming_append(["```" +
+                                                                                       obj.author.name + " is not in a team, therefore cant participate until a new game is created```",
+                                                                                     self.opid])
+
                                             if round_start + 30 <= get_second():
                                                 await self.client.send_message(self.message.channel,
                                                                                "```Nobody guessed it, "
@@ -236,9 +254,14 @@ class Main:
 
                                 await asyncio.sleep(.01)
                         else:
-                            await self.client.send_message(self.message.channel,
-                                                            "```Atleast " + str(2 - len(self.team)) + " people needed to "
-                                                                                                        "start```")
+                            if 2 - len(self.team) >= 2:
+                                await self.client.send_message(self.message.channel,
+                                                                "```Atleast " + str(2 - len(self.team)) + " more people needed to start```")
+                            else:
+                                await self.client.send_message(self.message.channel,
+                                                               "```Atleast " + str(2 - len(
+                                                                   self.team)) + " more person needed to start```")
+                    else:
                         self.received.pop(0)
         elif self.received[0].content == '^1':
             await self.client.send_message(self.message.channel, "```Scrabble! \n\nTutorial: The game of scrabble is "
@@ -322,10 +345,11 @@ class Main:
             if self.conid == 1:
                 self.received.pop(0)
 
-    def new_connection(self, conpath, payload, conid):
+    def new_connection(self, conpath, payload, conid, ot):
         self.connection = [conpath, payload, conid]
         self.conid = conid
         self.direct = conpath
+        self.other_team = ot
         if self.conid == 1:
             self.opid = 0
         else:

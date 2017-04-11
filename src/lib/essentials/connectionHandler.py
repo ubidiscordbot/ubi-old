@@ -10,11 +10,11 @@ class Connection:
 
     def add_search(self, payload):
         if payload[0] == "Scrabble":
-            self.servers_searching_scrabble.append([payload[1], payload[2]])
+            self.servers_searching_scrabble.append([payload[1], payload[2], payload[3]])
         if payload[0] == "Reaction":
-            self.servers_searching_reaction.append([payload[1], payload[2]])
+            self.servers_searching_reaction.append([payload[1], payload[2], payload[3]])
         if payload[0] == "Mathwars":
-            self.servers_searching_mathwars.append([payload[1], payload[2]])
+            self.servers_searching_mathwars.append([payload[1], payload[2], payload[3]])
 
     async def main_runtime(self):
         while True:
@@ -43,8 +43,8 @@ class ConnectionRuntime():
                 if len(connection_data) == 2:
                     break
             i2 += 1
-        connection_data[0][1].new_connection(self, self.servers[1][1], 0)
-        connection_data[1][1].new_connection(self, self.servers[0][1], 1)
+        connection_data[0][1].new_connection(self, self.servers[1][1], 0, self.servers[1][2])
+        connection_data[1][1].new_connection(self, self.servers[0][1], 1, self.servers[0][2])
         while True:
             if len(self.incoming) != 0:
                 connection_data[self.incoming[0][1]][1].connection_receive(self.incoming[0])
@@ -55,7 +55,6 @@ class ConnectionRuntime():
 
     def incoming_append(self, payload):
         self.incoming.append(payload)
-        print(payload)
 
     def close(self):
         self.closed = True
