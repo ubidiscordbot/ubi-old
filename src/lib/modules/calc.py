@@ -132,6 +132,7 @@ def solve_problem(p):
     final_ = solve_inferior(list2)
     return final_[0]
 
+
 def main(message):
     l = list(message.content)
     i = 0

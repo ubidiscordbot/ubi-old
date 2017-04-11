@@ -6,12 +6,16 @@ import src.lib.essentials.commandHandler as commandHandler
 import src.lib.essentials.socketHandler as socketHandler
 import src.lib.essentials.create as create
 import src.lib.runtimes.games.scrabble as Scrabble
+import src.lib.essentials.connectionHandler as connection
 
 create.create()
 
 rts = socketHandler.Objs()
 
 client = discord.Client()
+
+con = connection.Connection(client, rts)
+
 
 @client.event
 async def on_message(message):
@@ -38,7 +42,8 @@ async def on_message(message):
                     f = open("server/servers/" + message.server.id + ".json", "w")
                     f.write(json.dumps([True]))
                     f.close()
-                    rts.create_socket([message.server.id, Scrabble.Main(message=message, client=client, obj=rts)])
+                    rts.create_socket([message.server.id, Scrabble.Main(message=message, client=client, obj=rts,
+                                                                        connect=con)])
                     client.loop.create_task(rts.rtobj_get()[len(rts.rtobj_get()) - 1][1].scrabble_runtime())
             else:
                 await client.send_message(message.channel, "```There's already have a game running on the server, end or close it to "
@@ -74,5 +79,6 @@ async def on_ready():
     print(client.user.id)
     print('------')
 
+client.loop.create_task(con.main_runtime())
 client.run('removed')
 # Always change token to removed when committing
