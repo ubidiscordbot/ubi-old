@@ -7,6 +7,9 @@ import src.lib.essentials.socketHandler as socketHandler
 import src.lib.essentials.create as create
 import src.lib.runtimes.games.scrabble as Scrabble
 import src.lib.essentials.connectionHandler as connection
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 create.create()
 
