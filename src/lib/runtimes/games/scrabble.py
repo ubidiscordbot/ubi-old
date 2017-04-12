@@ -97,9 +97,11 @@ class Main:
                                                        self.received[0].author.name + " has joined the team!```")
                         self.received.pop(0)
                     elif self.received[0].content == '^cancel':
+                        await self.client.send_message(self.message.channel,
+                                                       "```Canceled```")
                         self.received.pop(0)
                         self.obj.close_socket(self.message.server.id)
-                        break
+                        return None
                     elif self.received[0].content == "^start":
                         self.received.pop(0)
                         if len(self.team) >= 2:
@@ -107,6 +109,14 @@ class Main:
                                                        "```Searching for opposing server```")
                             self.connect.add_search(["Scrabble", self.message.server.id, self.message.server, self.team])
                             while True:
+                                if len(self.received) != 0:
+                                    if self.received[0].content == '^cancel':
+                                        await self.client.send_message(self.message.channel,
+                                                                       "```Canceled```")
+                                        self.received.pop(0)
+                                        self.obj.close_socket(self.message.server.id)
+                                        return None
+
                                 if len(self.connection) != 0:
                                     await self.client.send_message(self.message.channel, "```Server found! \n\nOpposing server: " +
                                                                    str(self.connection[1]) + "```")
