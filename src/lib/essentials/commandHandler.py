@@ -16,6 +16,11 @@ def handle(payload):
         2. $comic ~ uploads a comic from xkcd
         3. $meme ~ uploads a meme from memes.com
         4. $scrabble ~ starts a game of scrabble
+    Music commands
+        1. $music add (url) ~ replace (url) with youtube link, adds link to quene
+        2. $music skip ~ adds vote to skip current song (2 votes = skip)
+        3. $music playlist ~ shows all songs in the playlist quene
+        To use these commands must be in a voice channel
     Plus Plus commands
         plus plus is a system built within ubi to award teammates with 'points'
         1. $stats ~ gets a leaderboard of plus plus scores
@@ -36,3 +41,5 @@ def handle(payload):
         return ["Single", src.lib.modules.calc.main(payload)]
     elif payload.content.lower().startswith("$scrabble"):
         return ["Socket", "Scrabble"]
+    elif payload.content.lower().startswith("$music"):
+        return ["Socket", "Music"]
