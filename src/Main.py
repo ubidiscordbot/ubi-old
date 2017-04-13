@@ -26,7 +26,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith("$"):
+    if message.content.startswith(";"):
         d_ = commandHandler.handle(message)
         if d_[0] == "Single":
             for i in d_[1]:
