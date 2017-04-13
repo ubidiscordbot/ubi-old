@@ -283,7 +283,7 @@ class Main:
                                                                  "correct you will be awarded a certain amount of "
                                                                  "points based on the difficulty of the problem. "
                                                                  "the person with the most points at the end of "
-                                                                 "the game wins \n\n**Starting in 20 seconds...**")
+                                                                 "the game wins \n\n**Beginning in 20 seconds...**")
             await asyncio.sleep(20)
             await self.client.send_message(self.message.channel, "**Scrabble!**")
             current_round = 1
