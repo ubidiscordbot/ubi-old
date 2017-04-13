@@ -3,6 +3,7 @@ import src.lib.modules.comics
 import src.lib.modules.plusplus
 import src.lib.modules.flipcoin
 import src.lib.modules.calc
+import src.lib.modules.vote
 import src.lib.runtimes.games.mathwars
 import src.lib.runtimes.games.reaction
 import src.lib.runtimes.games.scrabble
@@ -36,8 +37,12 @@ def handle(payload):
         return ["Single", src.lib.modules.flipcoin.main()]
     elif payload.content.lower() == ";comic":
         return ["Single", src.lib.modules.comics.main()]
+    elif payload.content.lower() == ";vote":
+        return ["Single", src.lib.modules.vote.main()]
     elif payload.content.lower() == ";meme":
         return ["Single", src.lib.modules.memes.main()]
+    elif payload.content.lower() == ";meme":
+        return ["Single", src.lib.modules.vote.main()]
     elif payload.content.lower() == ";stats":
         return ["Single", src.lib.modules.plusplus.main_stats(payload)]
     elif payload.content.lower().startswith(";++") or payload.content.lower().startswith(";--"):

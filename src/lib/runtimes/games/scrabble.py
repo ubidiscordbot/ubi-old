@@ -104,7 +104,7 @@ class Main:
                         return None
                     elif self.received[0].content == "^start":
                         self.received.pop(0)
-                        if len(self.team) >= 2:
+                        if len(self.team) >= 1:
                             await self.client.send_message(self.message.channel,
                                                        "**Searching for an opposing server**")
                             self.connect.add_search(["Scrabble", self.message.server.id, self.message.server, self.team])
@@ -199,7 +199,7 @@ class Main:
                                                             await self.client.send_message(self.message.channel,
                                                                                            "That's not it, **" +
                                                                                            obj.author.name + "**. Keep Trying!")
-                                                            self.direct.incoming_append(["SThat's not it, **" +
+                                                            self.direct.incoming_append(["That's not it, **" +
                                                                                            obj.author.name + "**. Keep Trying!", self.opid])
                                                     else:
                                                         obj = self.received[0]
@@ -323,7 +323,7 @@ class Main:
                             for i in n:
                                 num += 1
                                 multi = 18 - len(i[0])
-                                final_string += str(num) + ". " + i[0] + " " * multi + str(i[1]) + ""
+                                final_string += str(num) + ". " + i[0] + " " * multi + "**" + str(i[1]) + "**"
                             await self.client.send_message(self.message.channel, final_string)
                             break
                         else:
