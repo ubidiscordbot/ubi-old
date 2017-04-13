@@ -88,12 +88,11 @@ async def on_server_join(server):
     f  = open("server/servers/" + str(server.id) + ".json", "w")
     f.write(json.dumps([False]))
     f.close()
-    await client.send_message(server.default_channel, "http://i.cubeupload.com/Cn0KwZ.png")
-    await client.send_message(server.default_channel, "http://i.cubeupload.com/ohkUoP.png")
-    await client.send_message(server.default_channel, "http://i.cubeupload.com/acGvxZ.png")
+    await client.send_message(server.default_channel, "https://i.cubeupload.com/HIkXQ5.png")
 
 @client.event
 async def on_ready():
+    await client.change_presence(game=discord.Game(name='$help to start'))
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)

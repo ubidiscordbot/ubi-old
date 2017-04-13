@@ -1,4 +1,5 @@
 import os
+import json
 import urllib.request
 
 
@@ -15,11 +16,19 @@ def create():
                                    "server/assets/words.txt")
     if not os.path.exists("server/games/"):
         os.makedirs("server/games")
+        f = open("server/games/gamerank.json", "w")
+        f.write(json.dumps([]))
+        f.close()
     if not os.path.exists("server/bin/comics"):
         os.makedirs("server/bin/comics")
     if not os.path.exists("server/bin/memes"):
         os.makedirs("server/bin/memes")
     if not os.path.exists("server/runtimes"):
         os.makedirs("server/runtimes")
+    if not os.path.exists("server/news"):
+        os.makedirs("server/news")
+        f = open("server/news/news.json", "w")
+        f.write(json.dumps([]))
+        f.close()
 
 create()

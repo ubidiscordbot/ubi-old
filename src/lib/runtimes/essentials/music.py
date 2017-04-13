@@ -29,13 +29,13 @@ class Music:
     def __init__(self, client, message):
         self.voice = None
         self.client = client
-        self.msg = None
         self.received = []
         self.songs = []
         self.message = message
         self.channel = message.author.voice.voice_channel
         self.player = None
         self.playing = False
+        self.paused = False
         self.votes = []
         print("initiated")
 
@@ -50,14 +50,14 @@ class Music:
                     url = ''.join(payload)
                     if url_check(url) is True:
                         if url.find("youtube") == -1:
-                            await self.client.send_message(self.received[0].channel, "```Not a valid youtube url!```")
+                            await self.client.send_message(self.received[0].channel, "[**Music**] Not a valid youtube url!")
                         else:
                             self.songs.append([url, self.received[0].author.name, find_name(url)])
-                            await self.client.send_message(self.received[0].channel, "```" + self.songs[0][2] + " was added to the quene by "
-                                                           + self.received[0].author.name + "```")
+                            await self.client.send_message(self.received[0].channel, "[**Music**] " + self.songs[0][2] + " was added to the quene by "
+                                                           + self.received[0].author.name)
                             self.message = self.received[0]
                     else:
-                        await self.client.send_message(self.received[0].channel, "```Not a valid youtube url!```")
+                        await self.client.send_message(self.received[0].channel, "[**Music**] Not a valid youtube url!")
                 elif self.received[0].content.startswith("$music playlist"):
                     await self.client.send_message(self.received[0].channel, "```Playlist```")
                     string = ""
@@ -71,40 +71,61 @@ class Music:
                 elif self.received[0].content.startswith("$music move"):
                     self.channel = self.received[0].author.voice.voice_channel
                     if self.channel is None:
-                        await self.client.send_message(self.received[0].channel, "Please join a voice channel")
+                        await self.client.send_message(self.received[0].channel, "[**Music**] Please join a voice channel")
                     else:
                         try:
                             await self.voice.move_to(self.channel)
                         except Exception:
-                            await self.client.send_message(self.received[0].channel, "Failed to join channel")
+                            await self.client.send_message(self.received[0].channel, "[**Music**] Failed to join channel")
                 elif self.received[0].content.startswith("$music skip"):
                     if self.playing:
                         if not self.received[0].author in self.votes:
                             self.votes.append(self.received[0].author)
                             if len(self.votes) == 1:
-                                await self.client.send_message(self.received[0].channel, "```" + self.received[0].author.name
+                                await self.client.send_message(self.received[0].channel, "[**Music**] " + self.received[0].author.name
                                                                + " called a vote to skip this song (one more person needed"
-                                                                 " to skip)```")
+                                                                 " to skip)")
                             else:
-                                await self.client.send_message(self.received[0].channel, "```Skipping " +
-                                                               self.player.title + "```")
+                                await self.client.send_message(self.received[0].channel, "[**Music**] Skipping " +
+                                                               self.player.title)
                                 self.player.stop()
                         else:
-                            await self.client.send_message(self.received[0].channel, "```"
+                            await self.client.send_message(self.received[0].channel, "[**Music**] "
                                                                                      "You already voted to skip this"
                                                                                      " song " +
-                                                           self.received[0].author.name + "!```")
+                                                           self.received[0].author.name + "!")
+                elif self.received[0].content.startswith("$music pause"):
+                    if self.playing and not self.paused:
+                        self.player.pause()
+                        await self.client.send_message(self.message.channel, "[**Music**] Paused " + self.player.title)
+                        self.paused = True
+                    elif not self.playing:
+                        await self.client.send_message(self.message.channel, "[**Music**] There is no song playing")
+                    elif self.paused:
+                        await self.client.send_message(self.message.channel, "[**Music**] Songs already paused")
+                elif self.received[0].content.startswith("$music resume"):
+                    if self.playing and self.paused:
+                        self.player.resume()
+                        await self.client.send_message(self.message.channel, "[**Music**] Resumed " + self.player.title)
+                        self.paused = False
+                    elif not self.playing:
+                        await self.client.send_message(self.message.channel, "[**Music**] There is no song playing")
+                    elif not self.paused:
+                        await self.client.send_message(self.message.channel, "[**Music**] Song is already playing")
                 elif self.received[0].content.startswith("$music"):
                     pass
                 self.received.pop(0)
 
             if not self.playing and len(self.songs) != 0:
-                self.player = await self.voice.create_ytdl_player(self.songs[0][0], after=self.done)
-                self.songs.pop(0)
-                self.playing = True
-                self.player.start()
                 try:
-                    await self.client.send_message(self.message.channel, "```Now playing: " + self.player.title + "```")
+                    self.player = await self.voice.create_ytdl_player(self.songs[0][0], after=self.done)
+                    self.songs.pop(0)
+                    self.playing = True
+                    self.player.start()
+                except Exception:
+                    await self.client.send_message(self.message.channel, "[**Music**] Failed to play song.")
+                try:
+                    await self.client.send_message(self.message.channel, "[**Music**] Now playing: " + self.player.title)
                 except Exception:
                     pass
             await asyncio.sleep(.01)

@@ -10,23 +10,28 @@ import src.lib.runtimes.games.scrabble
 
 def handle(payload):
     if payload.content.lower() == "$help":
-        return ["Single", [["text", """```Ubi Help
-    Standard commands
-        1. $flipcoin ~ flips a coin
-        2. $comic ~ uploads a comic from xkcd
-        3. $meme ~ uploads a meme from memes.com
-        4. $scrabble ~ starts a game of scrabble
-    Music commands
-        1. $music add (url) ~ replace (url) with youtube link, adds link to quene
-        2. $music skip ~ adds vote to skip current song (2 votes = skip)
-        3. $music playlist ~ shows all songs in the playlist quene
-        To use these commands must be in a voice channel
-    Plus Plus commands
-        plus plus is a system built within ubi to award teammates with 'points'
-        1. $stats ~ gets a leaderboard of plus plus scores
-        2. $++(user) ~ adds a point to a specific user (don't put a space between the last + and the users name)
-        3. $--(user) ~ removes a point from a specific user (don't put a space between the last - and the users name)
-        ```"""]]]
+        return ["Single", [["text", """**Ubi Help**
+
+    __Standard commands__
+
+        **$flipcoin** - flips a coin
+        **$comic** - uploads a comic from xkcd
+        **$meme** -  uploads a meme from memes.com
+        **$scrabble** - starts a game of scrabble
+
+    __Music commands__
+
+        **$music add <url>** - replace (url) with youtube link, adds link to quene
+        **$music skip** -  adds vote to skip current song (2 votes = skip)
+        **$music playlist** - shows all songs in the playlist quene
+        **$music move** - moves bot to the voice channel you're in
+
+    __Plus Plus commands__
+
+        **$stats** - gets a leaderboard of plus plus scores
+        **$++<user>** - adds a point to a specific user (don't put a space between the last + and the users name)
+        **$--<user>** - removes a point from a specific user (don't put a space between the last - and the users name)
+        """]]]
     elif payload.content.lower() == "$flipcoin":
         return ["Single", src.lib.modules.flipcoin.main()]
     elif payload.content.lower() == "$comic":
