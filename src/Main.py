@@ -100,4 +100,4 @@ async def on_ready():
 
 client.loop.create_task(con.main_runtime())
 client.run('removed')
-# Always change token to removed when committing
+# Always change token to removed when committing 
