@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/ubidiscordbot/ubi/issues"
   },
-  "homepage": "https://github.com/ubidiscordbot/ubi#readme"
+  "homepage": "https://github.com/ubidiscordbot/ubi#readme",
+  "dependencies": {
+    "express": "^4.15.2",
+    "express-handlebars": "^3.0.0"
+  }
 }
