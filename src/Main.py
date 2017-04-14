@@ -95,11 +95,10 @@ async def on_server_join(server):
 
 @client.event
 async def on_ready():
-    await client.change_presence(game=discord.Game(name='$help to start'))
+    await client.change_presence(game=discord.Game(name=';help to start'))
     print('Logged in as')
     print(client.user.name)
     print(client.user.id)
-    print('------')
 
 client.loop.create_task(con.main_runtime())
 client.run('Mjk3NTg4ODg2MzMzNTU0Njkw.C9CWOg.IT_jZBg6KxHgoSnQYCFRWiTEhng')

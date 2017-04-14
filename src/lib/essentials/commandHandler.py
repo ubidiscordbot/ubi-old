@@ -20,9 +20,12 @@ def handle(payload):
         **;comic** - uploads a comic from xkcd
         **;meme** -  uploads a meme from memes.com
         **;scrabble** - starts a game of scrabble
+        **;calc <expression>** - evaluates an arithmetic expression
+        **;8ball <message>** - asks the all seeing 8 ball
 
     __Music commands__
 
+        **;music** - initializes music
         **;music add <url>** - replace (url) with youtube link, adds link to quene
         **;music skip** -  adds vote to skip current song (2 votes = skip)
         **;music playlist** - shows all songs in the playlist quene
