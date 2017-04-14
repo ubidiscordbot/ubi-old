@@ -77,7 +77,7 @@ async def on_message(message):
                     i[1].receive(payload=message)
                     break
 
-    if message.content.startswith("$music"):
+    if message.content.startswith(";music"):
         for i in rts.rtobj_get():
             if i[0] == message.server.id:
                 i[1].receive(message)
@@ -101,5 +101,5 @@ async def on_ready():
     print(client.user.id)
 
 client.loop.create_task(con.main_runtime())
-client.run('Mjk3ODgyODcyNjE2ODQ1MzE0.C9Gyrw.nPtXnuQhDnLi5sWVvTfR4F3sIgk')
+client.run('removed')
 # Always change token to removed when committing

@@ -6,4 +6,4 @@ responses = ["As I See It Yes.", "Ask Again Later.", "Better Not Tell You Now.",
 
 
 def main():
-        return [["text", "**" + random.choice(responses) + "**"]]
+    return [["text", "**" + random.choice(responses) + "**"]]
