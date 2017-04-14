@@ -40,8 +40,8 @@ def handle(payload):
         return ["Single", src.lib.modules.flipcoin.main()]
     elif payload.content.lower() == ";comic":
         return ["Single", src.lib.modules.comics.main()]
-    elif payload.content.lower() == ";poll":
-        return ["Single", src.lib.modules.poll.main()]
+    elif payload.content.lower().startswith(";poll"):
+        return ["Single", src.lib.modules.poll.main(payload)]
     elif payload.content.lower() == ";meme":
         return ["Single", src.lib.modules.memes.main()]
     elif payload.content.lower() == ";stats":
