@@ -4,6 +4,7 @@ import src.lib.modules.plusplus
 import src.lib.modules.flipcoin
 import src.lib.modules.calc
 import src.lib.modules.poll
+import src.lib.modules.magicball
 import src.lib.runtimes.games.mathwars
 import src.lib.runtimes.games.reaction
 import src.lib.runtimes.games.scrabble
@@ -39,6 +40,8 @@ def handle(payload):
         return ["Single", src.lib.modules.comics.main()]
     elif payload.content.lower() == ";vote":
         return ["Single", src.lib.modules.poll.main()]
+    elif payload.content.lower().startswith(";8ball"):
+        return ["Single", src.lib.modules.magicball.main()]
     elif payload.content.lower() == ";meme":
         return ["Single", src.lib.modules.memes.main()]
     elif payload.content.lower() == ";meme":
