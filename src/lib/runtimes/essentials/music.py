@@ -51,7 +51,7 @@ class Music:
         await self.create_voice_client(self.channel)
         while True:
             if len(self.received) != 0:
-                if self.received[0].content.startswith("$music add "):
+                if self.received[0].content.startswith(";music add "):
                     payload = list(self.received[0].content)
                     for i in range(11):
                         payload.pop(0)
@@ -66,7 +66,7 @@ class Music:
                             self.message = self.received[0]
                     else:
                         await self.client.send_message(self.received[0].channel, "[**Music**] Not a valid youtube url!")
-                elif self.received[0].content.startswith("$music playlist"):
+                elif self.received[0].content.startswith(";music playlist"):
                     await self.client.send_message(self.received[0].channel, "```Playlist```")
                     string = ""
                     i2 = 0
@@ -74,9 +74,9 @@ class Music:
                         i2 += 1
                         string += str(i2) + ". " + i[2] + " " * 4 + "Suggested by: " + i[1] + "\n" * 2
                     if len(string) == 0:
-                        string = "Playlist empty, add a new song with $music add"
+                        string = "Playlist empty, add a new song with ;music add"
                     await self.client.send_message(self.received[0].channel, "```" + string + "```")
-                elif self.received[0].content.startswith("$music move"):
+                elif self.received[0].content.startswith(";music move"):
                     self.channel = self.received[0].author.voice.voice_channel
                     if self.channel is None:
                         await self.client.send_message(self.received[0].channel, "[**Music**] Please join a voice channel")
@@ -85,7 +85,7 @@ class Music:
                             await self.voice.move_to(self.channel)
                         except Exception:
                             await self.client.send_message(self.received[0].channel, "[**Music**] Failed to join channel")
-                elif self.received[0].content.startswith("$music skip"):
+                elif self.received[0].content.startswith(";music skip"):
                     if self.playing:
                         if not self.received[0].author in self.votes:
                             self.votes.append(self.received[0].author)
@@ -102,7 +102,7 @@ class Music:
                                                                                      "You already voted to skip this"
                                                                                      " song " +
                                                            self.received[0].author.name + "!")
-                elif self.received[0].content.startswith("$music pause"):
+                elif self.received[0].content.startswith(";music pause"):
                     if self.playing and not self.paused:
                         self.player.pause()
                         await self.client.send_message(self.message.channel, "[**Music**] Paused " + self.player.title)
@@ -111,7 +111,7 @@ class Music:
                         await self.client.send_message(self.message.channel, "[**Music**] There is no song playing")
                     elif self.paused:
                         await self.client.send_message(self.message.channel, "[**Music**] Songs already paused")
-                elif self.received[0].content.startswith("$music resume"):
+                elif self.received[0].content.startswith(";music resume"):
                     if self.playing and self.paused:
                         self.player.resume()
                         await self.client.send_message(self.message.channel, "[**Music**] Resumed " + self.player.title)
@@ -120,7 +120,7 @@ class Music:
                         await self.client.send_message(self.message.channel, "[**Music**] There is no song playing")
                     elif not self.paused:
                         await self.client.send_message(self.message.channel, "[**Music**] Song is already playing")
-                elif self.received[0].content.startswith("$music"):
+                elif self.received[0].content.startswith(";music"):
                     pass
                 self.received.pop(0)
 
