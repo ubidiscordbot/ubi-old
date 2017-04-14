@@ -2,6 +2,14 @@ import asyncio
 import re
 import urllib.request
 import requests
+import time
+import math
+
+
+def get_second():
+    time_since_1970 = time.time()
+    time_since_2000 = math.floor(time_since_1970 + 60 * 60 * 24 * 365 * 30)
+    return time_since_2000
 
 
 def url_check(url):
@@ -11,6 +19,7 @@ def url_check(url):
             return True
     except Exception:
         return False
+
 
 def find_name(url):
     with urllib.request.urlopen(url) as response:
@@ -37,7 +46,6 @@ class Music:
         self.playing = False
         self.paused = False
         self.votes = []
-        print("initiated")
 
     async def music_runtime(self):
         await self.create_voice_client(self.channel)
@@ -128,7 +136,20 @@ class Music:
                     await self.client.send_message(self.message.channel, "[**Music**] Now playing: " + self.player.title)
                 except Exception:
                     pass
+            if self.playing:
+                if not self.player.is_playing():
+                    self.playing = False
             await asyncio.sleep(.01)
+            if self.playing:
+                if self.player.error is not None:
+                    print("Error Occurred")
+                    try:
+                        self.done()
+                        self.create_voice_client(self.channel)
+                        self.player = None
+                    except Exception:
+                        print("Closing Socket")
+                        return None
 
     def receive(self, payload):
         self.received.append(payload)
@@ -137,6 +158,6 @@ class Music:
         self.voice = await self.client.join_voice_channel(channel)
 
     def done(self):
-        print("Done")
+        print("Ubi> Song ended")
         self.playing = False
         self.votes = []

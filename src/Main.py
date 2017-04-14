@@ -8,9 +8,6 @@ import src.lib.essentials.create as create
 import src.lib.runtimes.games.scrabble as Scrabble
 import src.lib.essentials.connectionHandler as connection
 import src.lib.runtimes.essentials.music as Music
-import logging
-
-logging.basicConfig(level=logging.INFO)
 
 create.create()
 
@@ -29,14 +26,20 @@ async def on_message(message):
     if message.content.startswith(";"):
         d_ = commandHandler.handle(message)
         if d_[0] == "Single":
-            for i in d_[1]:
-                if i[0] == "text":
-                    await client.send_message(message.channel, i[1])
-                elif i[0] == "fileKeep":
-                    await client.send_file(message.channel, i[1])
-                elif i[0] == "fileRemove":
-                    await client.send_file(message.channel, i[1])
-                    os.remove(i[1])
+            if d_[1][0][0] != "textPoll":
+                for i in d_[1]:
+                    if i[0] == "text":
+                        await client.send_message(message.channel, i[1])
+                    elif i[0] == "fileKeep":
+                        await client.send_file(message.channel, i[1])
+                    elif i[0] == "fileRemove":
+                        await client.send_file(message.channel, i[1])
+                        os.remove(i[1])
+            else:
+                await client.delete_message(message)
+                m_ = await client.send_message(message.channel, d_[1][0][1])
+                await client.add_reaction(m_, '👍')
+                await client.add_reaction(m_, '👎')
         elif d_[0] == "Socket":
             f = open("server/servers/" + str(message.server.id) + ".json", "r")
             f_ = json.loads(f.read())
@@ -59,9 +62,8 @@ async def on_message(message):
                     if message.author.voice.voice_channel is not None:
                         rts.create_socket([message.server.id, Music.Music(client, message)])
                         client.loop.create_task(rts.rtobj_get()[len(rts.rtobj_get()) - 1][1].music_runtime())
-                        print("Success")
                     else:
-                        await client.send_message(message.channel, "```Please join a voice channel before using $music```")
+                        await client.send_message(message.channel, "[**Music**]Please join a voice channel before using $music")
             else:
                 await client.send_message(message.channel, "```There's already have a game running on the server, end or close it to "
                                           "start a"" new one```")
@@ -82,6 +84,7 @@ async def on_message(message):
 
 @client.event
 async def on_server_join(server):
+    print("Joined " + str(server))
     f = open("server/plusplus/" + str(server.id) + ".json", "w")
     f.write(json.dumps([]))
     f.close()
@@ -99,5 +102,5 @@ async def on_ready():
     print('------')
 
 client.loop.create_task(con.main_runtime())
-client.run('removed')
-# Always change token to removed when committing 
+client.run('Mjk3NTg4ODg2MzMzNTU0Njkw.C9CWOg.IT_jZBg6KxHgoSnQYCFRWiTEhng')
+# Always change token to removed when committing
