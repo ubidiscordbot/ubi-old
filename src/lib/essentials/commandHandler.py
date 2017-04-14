@@ -5,6 +5,7 @@ import src.lib.modules.flipcoin
 import src.lib.modules.calc
 import src.lib.modules.poll
 import src.lib.modules.magicball
+import src.lib.modules.define
 import src.lib.runtimes.games.mathwars
 import src.lib.runtimes.games.reaction
 import src.lib.runtimes.games.scrabble
