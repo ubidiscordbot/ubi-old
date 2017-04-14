@@ -45,6 +45,8 @@ def handle(payload):
         return ["Single", src.lib.modules.poll.main(payload)]
     elif payload.content.lower().startswith(";define"):
         return ["Single", src.lib.modules.define.main(payload)]
+    elif payload.content.lower().startswith(";weather"):
+        return ["Single", src.lib.modules.weather.main(payload)]
     elif payload.content.lower() == ";meme":
         return ["Single", src.lib.modules.memes.main()]
     elif payload.content.lower() == ";stats":
