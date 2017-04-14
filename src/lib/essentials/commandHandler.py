@@ -42,6 +42,8 @@ def handle(payload):
         return ["Single", src.lib.modules.comics.main()]
     elif payload.content.lower() == ";poll":
         return ["Single", src.lib.modules.poll.main()]
+    elif payload.content.lower() == ";define":
+        return ["Single", src.lib.modules.define.main()]
     elif payload.content.lower() == ";meme":
         return ["Single", src.lib.modules.memes.main()]
     elif payload.content.lower() == ";stats":
