@@ -142,8 +142,8 @@ def main(message):
     string = ''.join(l)
     if check_format(string):
         try:
-            return [["text", "```Answer: " + str(solve_problem(string)) + "```"]]
+            return [["text", "[**Math**] " + str(solve_problem(string))]]
         except Exception:
-            return [["text", "```Failed to calculate, problem seems to be in the wrong format```"]]
+            return [["text", "**Failed to calculate**, problem seems to be in the wrong format"]]
     else:
         return [["text", "Failed to calculate, problem seems to be in the wrong format"]]
