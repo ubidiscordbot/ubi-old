@@ -28,7 +28,9 @@ async def on_message(message):
         if d_[0] == "Single":
             if d_[1][0][0] != "textPoll":
                 for i in d_[1]:
-                    if i[0] == "text":
+                    if i[0] == "textEmbed":
+                        await client.send_message(message.channel, embed=i[1])
+                    elif i[0] == "text":
                         await client.send_message(message.channel, i[1])
                     elif i[0] == "fileKeep":
                         await client.send_file(message.channel, i[1])
@@ -101,5 +103,5 @@ async def on_ready():
     print(client.user.id)
 
 client.loop.create_task(con.main_runtime())
-client.run('removed')
+client.run('Mjk3NTg4ODg2MzMzNTU0Njkw.C9G-9A.8VoO3FWjfC3jKxS9a7I8B36eNHs')
 # Always change token to removed when committing

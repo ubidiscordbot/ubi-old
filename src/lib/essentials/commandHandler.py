@@ -8,11 +8,12 @@ import src.lib.modules.magicball
 import src.lib.runtimes.games.mathwars
 import src.lib.runtimes.games.reaction
 import src.lib.runtimes.games.scrabble
+import discord
 
 
 def handle(payload):
     if payload.content.lower() == ";help":
-        return ["Single", [["text", """**Ubi Help**
+        embed = discord.Embed(description="""**Ubi Help**
 
     __Standard commands__
 
@@ -20,12 +21,9 @@ def handle(payload):
         **;comic** - uploads a comic from xkcd
         **;meme** -  uploads a meme from memes.com
         **;scrabble** - starts a game of scrabble
-        **;calc <expression>** - evaluates an arithmetic expression
-        **;8ball <message>** - asks the all seeing 8 ball
 
     __Music commands__
 
-        **;music** - initializes music
         **;music add <url>** - replace (url) with youtube link, adds link to quene
         **;music skip** -  adds vote to skip current song (2 votes = skip)
         **;music playlist** - shows all songs in the playlist quene
@@ -36,19 +34,16 @@ def handle(payload):
         **;stats** - gets a leaderboard of plus plus scores
         **;++<user>** - adds a point to a specific user (don't put a space between the last + and the users name)
         **;--<user>** - removes a point from a specific user (don't put a space between the last - and the users name)
-        """]]]
+        """)
+        return ["Single", [["textEmbed", embed]]]
     elif payload.content.lower() == ";flipcoin":
         return ["Single", src.lib.modules.flipcoin.main()]
     elif payload.content.lower() == ";comic":
         return ["Single", src.lib.modules.comics.main()]
-    elif payload.content.lower() == ";vote":
+    elif payload.content.lower() == ";poll":
         return ["Single", src.lib.modules.poll.main()]
-    elif payload.content.lower().startswith(";8ball"):
-        return ["Single", src.lib.modules.magicball.main()]
     elif payload.content.lower() == ";meme":
         return ["Single", src.lib.modules.memes.main()]
-    elif payload.content.lower() == ";meme":
-        return ["Single", src.lib.modules.poll.main()]
     elif payload.content.lower() == ";stats":
         return ["Single", src.lib.modules.plusplus.main_stats(payload)]
     elif payload.content.lower().startswith(";++") or payload.content.lower().startswith(";--"):
@@ -59,5 +54,5 @@ def handle(payload):
         return ["Socket", "Scrabble"]
     elif payload.content.lower().startswith(";music"):
         return ["Socket", "Music"]
-    elif payload.content.lower().startswith(";poll"):
-        return ["Single", src.lib.modules.poll.main(payload)]
+    elif payload.content.lower().startswith(";8ball"):
+        return ["Single", src.lib.modules.magicball.main()]
