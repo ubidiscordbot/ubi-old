@@ -18,7 +18,7 @@ def handle(payload):
 
     __Standard commands__
 
-        **;flipcoin** - flips a coin
+        **;flipcoin** - flips a coin 
         **;comic** - uploads a comic from xkcd
         **;meme** -  uploads a meme from memes.com
         **;scrabble** - starts a game of scrabble
