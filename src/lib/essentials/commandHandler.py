@@ -22,13 +22,20 @@ def handle(payload):
         **;comic** - uploads a comic from xkcd
         **;meme** -  uploads a meme from memes.com
         **;scrabble** - starts a game of scrabble
+        **;poll <text>** - starts a basic yes/no poll
+        **;define <word>** - grabs the definition of any word
+        **;8ball <question>** - inquires the all seeing magic 8ball
+        **;weather <location>** - grabs weather data for specified location
+        **;calc <expression>** - evaluates any arithmetic expression
 
     __Music commands__
 
+        **;music** - initializes music and joins the channel you're in
         **;music add <url>** - replace (url) with youtube link, adds link to quene
         **;music skip** -  adds vote to skip current song (2 votes = skip)
         **;music playlist** - shows all songs in the playlist quene
         **;music move** - moves bot to the voice channel you're in
+        **;music pause** - pauses the current song
 
     __Plus Plus commands__
 
