@@ -42,7 +42,7 @@ def handle(payload):
         **;stats** - gets a leaderboard of plus plus scores
         **;++<user>** - adds a point to a specific user (don't put a space between the last + and the users name)
         **;--<user>** - removes a point from a specific user (don't put a space between the last - and the users name)
-        """)
+        """, color=0xe74c3c)
         return ["Single", [["textEmbed", embed]]]
     elif payload.content.lower() == ";flipcoin":
         return ["Single", src.lib.modules.flipcoin.main()]

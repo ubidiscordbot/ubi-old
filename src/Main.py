@@ -25,7 +25,6 @@ async def on_message(message):
 
     if message.content.startswith(";"):
         d_ = commandHandler.handle(message)
-        print(d_)
         if d_[0] == "Single":
             if d_[1][0][0] != "textPoll":
                 for i in d_[1]:
