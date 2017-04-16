@@ -67,8 +67,12 @@ async def on_message(message):
                     else:
                         await client.send_message(message.channel, "[**Music**]Please join a voice channel before using $music")
             else:
-                await client.send_message(message.channel, "```There's already have a game running on the server, end or close it to "
-                                          "start a"" new one```")
+                await client.send_message(message.channel, embed=discord.Embed(title="Game Error"
+                                                                               , description="There is already a game "
+                                                                                             "running on the server, "
+                                                                                             "please end it to start "
+                                                                                             "a new one"
+                                                                               ,color=0xe74c3c))
     if message.content.startswith("^"):
         f = open("server/servers/" + str(message.server.id) + ".json", "r")
         f_ = json.loads(f.read())
@@ -103,5 +107,5 @@ async def on_ready():
     print(client.user.id)
 
 client.loop.create_task(con.main_runtime())
-client.run('MzAyNTAzMDY4NjE5MTEyNDUw.C9Kj4Q._fFny8SLGwH-Aup6E_K4lj60aZw')
+client.run('removed')
 # Always change token to removed when committing

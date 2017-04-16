@@ -3,6 +3,7 @@ import time
 import math
 import random
 import re
+import discord
 
 
 def convert_response(string):
@@ -68,91 +69,128 @@ class Main:
         self.other_team = []
     async def scrabble_runtime(self):
         await self.client.wait_until_ready()
-        await self.client.send_message(self.message.channel, "**Welcome to Scrabble!**")
-        await self.client.send_message(self.message.channel, "Please choose a game mode:")
-        await self.client.send_message(self.message.channel, "1. One server game (^1) \n\n2. Two server game (^"
-                                                             "2)")
+        await self.client.send_message(self.message.channel,
+                                       embed=discord.Embed(title="Welcome to Scrabble!",
+                                                           description="Please choose a game mode: \n\n 1. One server"
+                                                                       " game (^1) \n\n2. Two server game (^2)", color=
+                                                           0xe67e22))
         second = get_second()
-        while second + 30 > get_second():
+        while second + 30 >= get_second():
             await asyncio.sleep(.01)
             if len(self.received) == 1:
                 if self.received[0].content == "^1" or self.received[0].content == "^2":
                     break
                 else:
                     self.received.pop(0)
-        if second + 30 < get_second():
-            await self.client.send_message(self.message.channel, "Nobody started game, closing session.")
+        if second + 30 <= get_second():
+            await self.client.send_message(self.message.channel
+                                           , embed=discord.Embed(title="Game Alert"
+                                                                 , description="Nobody started game, closing session."
+                                                                 , color=0x9b59b6))
             self.obj.close_socket(self.message.server.id)
         elif self.received[0].content == "^2":
             self.received.pop(0)
-            await self.client.send_message(self.message.channel, "At least 2 players needed to start, do **^join** to "
-                                                                 "join your servers team, when everyone is ready do "
-                                                                 "**^start**, if you wish to cancel the game do ^cancel")
+            await self.client.send_message(self.message.channel
+                                           , embed=discord.Embed(title="Lobby"
+                                                                 , description="At least 2 players needed to start, do"
+                                                                               " **^join** to "
+                                                                 "join your server's team. Once everyone is ready do "
+                                                                 "**^start**. If you wish to cancel the game do "
+                                                                               "**^cancel**"
+                                                                 , color=0xe67e22))
             while True:
                 await asyncio.sleep(.01)
                 if len(self.received) != 0:
                     if self.received[0].content == '^join':
-                        self.team.append(self.received[0].author)
-                        await self.client.send_message(self.message.channel, "**" +
-                                                       self.received[0].author.name + "** has joined the team!")
+                        if not self.received[0] in self.team:
+                            self.team.append(str(self.received[0].author))
+                            await self.client.send_message(self.message.channel
+                                                           , embed=discord.Embed(title="Lobby"
+                                                                                 ,
+                                                                                 description="**" +
+                                                           self.received[0].author.name + "** has joined the team!"
+                                                                                 , color=0xe67e22))
+                        else:
+                            await self.client.send_message(self.message.channel
+                                                           , embed=discord.Embed(title="Lobby"
+                                                                                 ,
+                                                                                 description="**" +
+                                                                                             self.received[
+                                                                                                 0].author.name + "** you already joined the team!"
+                                                                                 , color=0xe67e22))
                         self.received.pop(0)
                     elif self.received[0].content == '^cancel':
-                        await self.client.send_message(self.message.channel,
-                                                       "**Canceled.**")
+                        await self.client.send_message(self.message.channel, embed=discord.Embed(title="Game Alert"
+                                                                                                 , description=
+                                                                                                 "Game was forcibly"
+                                                                                                 " closed by client",
+                                                                                                 color=0x9b59b6))
                         self.received.pop(0)
                         self.obj.close_socket(self.message.server.id)
                         return None
                     elif self.received[0].content == "^start":
                         self.received.pop(0)
                         if len(self.team) >= 1:
-                            await self.client.send_message(self.message.channel,
-                                                       "**Searching for an opposing server**")
+                            await self.client.send_message(self.message.channel, embed=discord.Embed(title="Lobby",
+                                                                                                     description=
+                                                                                                     "Searching"
+                                                                                                     " for an"
+                                                                                                     " opposing server",
+                                                                                                     color=0xe67e22)
+                                                           )
                             self.connect.add_search(["Scrabble", self.message.server.id, self.message.server, self.team])
                             while True:
                                 if len(self.received) != 0:
                                     if self.received[0].content == '^cancel':
                                         await self.client.send_message(self.message.channel,
-                                                                       "**Canceled.**")
+                                                                       embed=discord.Embed(title="Game Alert"
+                                                                                           , description=
+                                                                                           "Game was forcibly"
+                                                                                           " closed by client",
+                                                                                           color=0x9b59b6))
                                         self.received.pop(0)
                                         self.obj.close_socket(self.message.server.id)
                                         return None
-
                                 if len(self.connection) != 0:
-                                    await self.client.send_message(self.message.channel, "**Server found!** \n\nOpposing server: " +
-                                                                   str(self.connection[1]))
+                                    await self.client.send_message(self.message.channel
+                                                                   , embed=discord.Embed(title="Lobby"
+                                                                                         , description="Server found!"
+                                                                                                       "\nOpposing"
+                                                                                                       " server: *" +
+                                                                                                       str(self.connection[1]) + "*"
+                                                                                         , color=0xe67e22))
                                     if self.conid == 0:
+                                        embed_obj = discord.Embed(title="Scrabble"
+                                                                  , description="Game starting in 20 seconds"
+                                                                  , color=0xe67e22)
                                         self.direct.incoming_append(
-                                            ["**Scrabble!** Game starting in 20 seconds", self.opid])
-                                        await self.client.send_message(self.message.channel,
-                                                                       "**Scrabble!** Game starting in 20 seconds")
+                                            [embed_obj, self.opid, "Bot"])
+                                        await self.client.send_message(self.message.channel, embed=embed_obj)
                                         await asyncio.sleep(20)
-                                        await self.client.send_message(self.message.channel, "**Scrabble!**")
-                                        self.direct.incoming_append(["**Scrabble!**", self.opid])
                                         current_round = 1
                                         leaderboard = []
                                         self.received = []
                                         while current_round <= 15:
                                             q = form_question()
-                                            await self.client.send_message(self.message.channel, "**Round " + str(
-                                                current_round) + "**\n\nLetters: "
-                                                                           + q[1])
-                                            self.direct.incoming_append(["**Round " + str(
-                                                current_round) + "**\n\nLetters: "
-                                                                           + q[1], self.opid])
+                                            embed_obj = discord.Embed(title="Round " + str(current_round)
+                                                                      , description="\nLetters: " + q[1],
+                                                                      color=0xe67e22)
+                                            await self.client.send_message(self.message.channel, embed=embed_obj)
+                                            self.direct.incoming_append([embed_obj, self.opid, "Bot"])
                                             round_start = get_second()
                                             while round_start + 30 > get_second():
                                                 await asyncio.sleep(.01)
                                                 if len(self.received) != 0 and self.received[0].author \
                                                         != self.client.user:
-                                                    if self.received[0].author in self.team or \
-                                                                    self.received[0].author in self.other_team:
+                                                    if str(self.received[0].author) in self.team or \
+                                                                    str(self.received[0].author) in self.other_team:
 
                                                         if len(self.connection_receive_list) != 0:
-                                                            await self.client.send_message(self.message.channel,
-                                                                                           "**" + self.connection_receive_list[0][
-                                                                                               0].author.name + "**: " +
-                                                                                           self.connection_receive_list[0][
-                                                                                               0].content)
+                                                            embed_obj = discord.Embed(description="**" + self.connection_receive_list[0][0].author.name
+                                                                                                  + "@" + str(self.connection[1]) + "**: " + self.connection_receive_list[0][0].content
+                                                                                      , color=0xe84d00)
+                                                            await self.client.send_message(self.message.channel, embed=embed_obj)
+                                                            self.connection_receive_list.pop(0)
 
                                                         guess = convert_response(self.received[0].content)
                                                         obj = self.received[0]
@@ -166,11 +204,11 @@ class Main:
                                                             self.direct.incoming_append(["**" + obj.author.name + "** guessed **" +
                                                                                            q[2] +
                                                                                            "** and received **" + str(
-                                                                                               q[0]) + "** points for their team!", self.opid])
+                                                                                               q[0]) + "** points for their team!", self.opid, "Bot"])
                                                             f = False
                                                             i2 = 0
                                                             name = str(self.message.server)
-                                                            if obj.author.name not in self.team:
+                                                            if str(obj.author) not in self.team:
                                                                 name = str(self.connection[1])
                                                             for i in leaderboard:
                                                                 if i[0] == name:
@@ -180,7 +218,7 @@ class Main:
                                                                 i2 += 1
                                                             if not f:
                                                                 leaderboard.append([name, q[0]])
-                                                            final_string = "Leaderboard" + "\n\n" + 'Name' + " " * 14 + "Points" + "\n\n"
+                                                            final_string = ""
                                                             n = form_new(leaderboard)
                                                             n.reverse()
                                                             leaderboard = n
@@ -190,17 +228,19 @@ class Main:
                                                                 multi = 18 - len(i[0])
                                                                 final_string += str(num) + ". " + i[0] + " " * multi + str(
                                                                     i[1]) + "\n"
+                                                            embed_obj = discord.Embed(title="Leaderboard", description=
+                                                                                      final_string, color=0xe67e22)
                                                             await self.client.send_message(self.message.channel,
-                                                                                           final_string)
+                                                                                           embed=embed_obj)
 
-                                                            self.direct.incoming_append([final_string, self.opid])
+                                                            self.direct.incoming_append([embed_obj, self.opid, "Bot"])
                                                             break
                                                         else:
                                                             await self.client.send_message(self.message.channel,
                                                                                            "That's not it, **" +
                                                                                            obj.author.name + "**. Keep Trying!")
                                                             self.direct.incoming_append(["That's not it, **" +
-                                                                                           obj.author.name + "**. Keep Trying!", self.opid])
+                                                                                           obj.author.name + "**. Keep Trying!", self.opid, "Bot"])
                                                     else:
                                                         obj = self.received[0]
                                                         self.received.pop(0)
@@ -209,55 +249,69 @@ class Main:
                                                                                        obj.author.name + "** is not in a team, and therefore cant participate until a new game is started.")
                                                         self.direct.incoming_append(["**" +
                                                                                        obj.author.name + "** is not in a team, and therefore cant participate until a new game is started.",
-                                                                                     self.opid])
+                                                                                     self.opid, "Bot"])
 
                                             if round_start + 30 <= get_second():
                                                 await self.client.send_message(self.message.channel,
                                                                                "Nobody guessed correctly, "
                                                                                "the answer was: **" + q[2] + "**")
                                                 self.direct.incoming_append(["Nobody guessed correctly, "
-                                                                               "the answer was: **" + q[2] + "**", self.opid])
+                                                                               "the answer was: **" + q[2] + "**", self.opid, "Bot"])
                                             current_round += 1
                                         n = form_new(leaderboard)
                                         n.reverse()
                                         if len(n) != 0:
                                             if len(n) > 1:
                                                 if n[0][1] != n[1][1]:
-                                                    await self.client.send_message(self.message.channel,
-                                                                                   "Game Finished! The winner is **" +
-                                                                                   n[0][0] + "**!")
-                                                    self.direct.incoming_append(["Game Finished! The winner is: **" +
-                                                                               n[0][0] + "**!", self.opid])
+                                                    embed_obj = discord.Embed(title="Scrabble"
+                                                                              , description="Game Finished!"
+                                                                                            " The winner is **" + n[0][0] + "**!"
+                                                                              , color=0xe67e22)
+                                                    await self.client.send_message(self.message.channel, embed=embed_obj)
+                                                    self.direct.incoming_append([embed_obj, self.opid, "Bot"])
                                                 else:
-                                                    await self.client.send_message(self.message.channel,
-                                                                               "Game Finished. **It's a tie!**")
-                                                    self.direct.incoming_append(["Game Finished. **It's a tie!**", self.opid])
+                                                    embed_obj = discord.Embed(title="Scrabble"
+                                                                              , description="Game Finished!"
+                                                                                            " **Its a tie**!"
+                                                                              , color=0xe67e22)
+                                                    await self.client.send_message(self.message.channel, embed=embed_obj)
+                                                    self.direct.incoming_append([embed_obj, self.opid, "Bot"])
                                             else:
-                                                await self.client.send_message(self.message.channel,
-                                                                               "Game Finished! The winner is **" + n[0][0]
-                                                                               + "**!")
-                                                self.direct.incoming_append(["Game Finished! The winner is **" + n[0][0]
-                                                                               + "**!", self.opid])
+                                                embed_obj = discord.Embed(title="Scrabble"
+                                                                          , description="Game Finished!"
+                                                                                        " The winner is **" + n[0][
+                                                                                            0] + "**!"
+                                                                          , color=0xe67e22)
+                                                await self.client.send_message(self.message.channel, embed=embed_obj)
+                                                self.direct.incoming_append([embed_obj, self.opid, "Bot"])
                                         else:
-                                            await self.client.send_message(self.message.channel,
-                                                                           "Game Finished. **Nobody won**.")
-                                            self.direct.incoming_append(["Game Finished. **Nobody won**.", self.opid])
-                                        self.direct.incoming_append(["CLOSE", self.opid])
+                                            embed_obj = discord.Embed(title="Scrabble"
+                                                                      , description="Game Finished!"
+                                                                                    " **Nobody won**!"
+                                                                      , color=0xe67e22)
+                                            await self.client.send_message(self.message.channel, embed=embed_obj)
+                                            self.direct.incoming_append([embed_obj, self.opid, "Bot"])
+                                        self.direct.incoming_append(["CLOSE", self.opid, "Bot"])
                                         self.obj.close_socket(self.message.server.id)
                                         return True
                                     else:
                                         while True:
                                             if len(self.connection_receive_list) != 0:
-                                                if isinstance(self.connection_receive_list[0][0], str):
-                                                    if not self.connection_receive_list[0][0] == "CLOSE":
-                                                        await self.client.send_message(self.message.channel, self.connection_receive_list[0][0])
-                                                    else:
-                                                        self.obj.close_socket(self.message.server.id)
-                                                        return True
-                                                else:
-                                                    await self.client.send_message(self.message.channel,
-                                                                               self.connection_receive_list[0][0].author.name +
-                                                                               self.connection_receive_list[0][0].content)
+                                                if self.connection_receive_list[0][2] == "User":
+                                                    embed_obj = discord.Embed(description="**" + self.connection_receive_list[0][0].author.name
+                                                                                          + "@" + str(self.connection[1]) + "**: " + self.connection_receive_list[0][0].content
+                                                                              , color=0xe84d00)
+                                                    await self.client.send_message(self.message.channel, embed=embed_obj)
+                                                elif self.connection_receive_list[0][2] == "Bot":
+                                                    if isinstance(self.connection_receive_list[0][0], discord.Embed):
+                                                        await self.client.send_message(self.message.channel
+                                                                                        , embed=self.connection_receive_list[0][0])
+                                                    elif isinstance(self.connection_receive_list[0][0], str):
+                                                        if self.connection_receive_list[0][0] == "CLOSE":
+                                                            self.obj.close_socket(self.message.server.id)
+                                                            return True
+                                                        else:
+                                                            await self.client.send_message(self.message.channel, self.connection_receive_list[0][0])
                                                 self.connection_receive_list.pop(0)
                                             await asyncio.sleep(.01)
                                         return True
@@ -265,16 +319,20 @@ class Main:
                                 await asyncio.sleep(.01)
                         else:
                             if 2 - len(self.team) >= 2:
-                                await self.client.send_message(self.message.channel,
-                                                                "**" + str(2 - len(self.team)) + "** more people needed to begin!")
+                                embed_obj = discord.Embed(title="Lobby"
+                                                          , description="**" + str(2 - len(self.team)) + "** more people needed to begin!"
+                                                          , color=0xe84d00)
+                                await self.client.send_message(self.message.channel, embed=embed_obj)
                             else:
-                                await self.client.send_message(self.message.channel,
-                                                               "**" + str(2 - len(
-                                                                   self.team)) + "** more person needed to begin!")
+                                embed_obj = discord.Embed(title="Lobby"
+                                                          , description="**" + str(
+                                        2 - len(self.team)) + "** more person needed to begin!"
+                                                          , color=0xe84d00)
+                                await self.client.send_message(self.message.channel, embed=embed_obj)
                     else:
                         self.received.pop(0)
         elif self.received[0].content == '^1':
-            await self.client.send_message(self.message.channel, "**Scrabble!** \n\n**Tutorial**: The game of scrabble "
+            embed_obj = discord.Embed(title="Scrabble", description="**Tutorial**: The game of scrabble "
                                                                  "is "
                                                                  "composed of a game with 15 rounds. each round I "
                                                                  "will upload a scrambled word; your job is to "
@@ -283,17 +341,19 @@ class Main:
                                                                  "correct you will be awarded a certain amount of "
                                                                  "points based on the difficulty of the problem. "
                                                                  "the person with the most points at the end of "
-                                                                 "the game wins \n\n**Beginning in 20 seconds...**")
+                                                                 "the game wins \n\n**Beginning in 20 seconds...**"
+                                      ,color=0xe67e22)
+            await self.client.send_message(self.message.channel, embed=embed_obj)
             await asyncio.sleep(20)
-            await self.client.send_message(self.message.channel, "**Scrabble!**")
             current_round = 1
             leaderboard = []
             self.received = []
             while current_round <= 15:
                 q = form_question()
-                await self.client.send_message(self.message.channel, "\n\nRound **" + str(current_round) +
-                                               "**\n\nLetters: **"
-                                               + q[1] + "**")
+                embed_obj = discord.Embed(title="Round " + str(current_round)
+                                          , description="\nLetters: " + q[1],
+                                          color=0xe67e22)
+                await self.client.send_message(self.message.channel, embed=embed_obj)
                 round_start = get_second()
                 while round_start + 30 > get_second():
                     await asyncio.sleep(.01)
@@ -315,7 +375,7 @@ class Main:
                                 i2 += 1
                             if not f:
                                 leaderboard.append([obj.author.name, q[0]])
-                            final_string = "**__Leaderboard__**" + "\n" + 'Name' + " " * 14 + "Points\n\n"
+                            final_string = ""
                             n = form_new(leaderboard)
                             n.reverse()
                             leaderboard = n
@@ -324,7 +384,8 @@ class Main:
                                 num += 1
                                 multi = 18 - len(i[0])
                                 final_string += str(num) + ". " + i[0] + " " * multi + "**" + str(i[1]) + "**"
-                            await self.client.send_message(self.message.channel, final_string)
+                            embed_obj = discord.Embed(title="Leaderboard", description=final_string, color=0xe67e22)
+                            await self.client.send_message(self.message.channel, embed=embed_obj)
                             break
                         else:
                             await self.client.send_message(self.message.channel, "That's not it, **" +
@@ -338,22 +399,37 @@ class Main:
             if len(n) != 0:
                 if len(n) > 1:
                     if n[0][1] != n[1][1]:
-                        await self.client.send_message(self.message.channel, "Game Finished! The winner is **" +
-                                                       n[0][0] + "**!")
+                        embed_obj = discord.Embed(title="Scrabble"
+                                                  , description="Game Finished!"
+                                                                " The winner is **" + n[0][0] + "**!"
+                                                  , color=0xe67e22)
+                        await self.client.send_message(self.message.channel, embed=embed_obj)
                     else:
-                        await self.client.send_message(self.message.channel, "Game Finished. **It's a tie**!")
+                        embed_obj = discord.Embed(title="Scrabble"
+                                                  , description="Game Finished!"
+                                                                " **Its a tie**!"
+                                                  , color=0xe67e22)
+                        await self.client.send_message(self.message.channel, embed=embed_obj)
                 else:
-                    await self.client.send_message(self.message.channel, "Game Finished! The winner is **" + n[0][0]
-                                                   + "**!")
+                    embed_obj = discord.Embed(title="Scrabble"
+                                              , description="Game Finished!"
+                                                            " The winner is **" + n[0][
+                                                                0] + "**!"
+                                              , color=0xe67e22)
+                    await self.client.send_message(self.message.channel, embed=embed_obj)
             else:
-                await self.client.send_message(self.message.channel, "Game Finished. **Nobody won.**")
+                embed_obj = discord.Embed(title="Scrabble"
+                                          , description="Game Finished!"
+                                                        " **Nobody won**!"
+                                          , color=0xe67e22)
+                await self.client.send_message(self.message.channel, embed=embed_obj)
 
             self.obj.close_socket(self.message.server.id)
 
     def receive(self, payload):
         self.received.append(payload)
         if len(self.connection) != 0:
-            self.direct.incoming_append([payload, self.opid])
+            self.direct.incoming_append([payload, self.opid, "User"])
             if self.conid == 1:
                 self.received.pop(0)
 
