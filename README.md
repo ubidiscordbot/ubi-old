@@ -1,6 +1,6 @@
 # Ubi
 
-#### A bot for discord created and mantained by Enclo, Zenith, and Laphatize.
+#### A bot for discord created and mantained by a lot of cool people
 
 #### Current Commands
 
