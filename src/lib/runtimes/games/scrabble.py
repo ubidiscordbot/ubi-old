@@ -383,7 +383,7 @@ class Main:
                             for i in n:
                                 num += 1
                                 multi = 18 - len(i[0])
-                                final_string += str(num) + ". " + i[0] + " " * multi + "**" + str(i[1]) + "**"
+                                final_string += str(num) + ". " + i[0] + " " * multi + "**" + str(i[1]) + "** \n"
                             embed_obj = discord.Embed(title="Leaderboard", description=final_string, color=0xe67e22)
                             await self.client.send_message(self.message.channel, embed=embed_obj)
                             break
