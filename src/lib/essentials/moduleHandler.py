@@ -5,9 +5,12 @@ class MdHandle:
     def __init__(self, client):
         self.mds = {}
         for server in client.servers:
-            f = open("server/servers/" + str(server.id) + ".json", "r")
-            f_ = json.loads(f.read())
-            self.mds[str(server.id)] = f_
+            try:
+                f = open("server/servers/" + str(server.id) + ".json", "r")
+                f_ = json.loads(f.read())
+                self.mds[str(server.id)] = f_
+            except FileNotFoundError:
+                pass
 
     def get(self):
         return self.mds

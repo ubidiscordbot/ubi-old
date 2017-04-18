@@ -77,10 +77,11 @@ async def on_message(message):
                                                                                              "a new one"
                                                                                ,color=0xe74c3c))
     if message.content.startswith("^"):
-        f = open("server/servers/" + str(message.server.id) + ".json", "r")
-        f_ = json.loads(f.read())
-        f.close()
-        if f_[0]:
+        found = False
+        for i in rts.rtobj_get():
+            if i[0] == message.server.id and not isinstance(i[1], Music.MusicClass):
+                found = True
+        if found:
             for i in rts.rtobj_get():
                 if i[0] == message.server.id:
                     i[1].receive(payload=message)
