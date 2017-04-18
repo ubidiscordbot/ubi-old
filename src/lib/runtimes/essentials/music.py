@@ -34,7 +34,7 @@ def find_name(url):
     return ''.join(l)
 
 
-class Music:
+class MusicClass:
     def __init__(self, client, message):
         self.voice = None
         self.client = client
