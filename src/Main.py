@@ -30,7 +30,7 @@ async def on_message(message):
 
     if message.content.startswith(";"):
         d_ = commandHandler.handle(message, mds, iph)
-        if d_[0] is not None:
+        if d_ is not None:
             if d_[0] == "Single":
                 if d_[1][0][0] != "textPoll":
                     for i in d_[1]:
@@ -117,5 +117,5 @@ async def on_ready():
     print(client.user.id)
 
 client.loop.create_task(con.main_runtime())
-client.run('Mjk3NTg4ODg2MzMzNTU0Njkw.C9faQw.cXRh2PwFnvvetWaMPuj_kknzsg8')
+client.run('removed')
 # Always change token to removed when committing
