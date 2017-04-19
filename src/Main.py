@@ -30,52 +30,55 @@ async def on_message(message):
 
     if message.content.startswith(";"):
         d_ = commandHandler.handle(message, mds, iph)
-        if d_[0] == "Single":
-            if d_[1][0][0] != "textPoll":
-                for i in d_[1]:
-                    if i[0] == "textEmbed":
-                        await client.send_message(message.channel, embed=i[1])
-                    elif i[0] == "text":
-                        await client.send_message(message.channel, i[1])
-                    elif i[0] == "fileKeep":
-                        await client.send_file(message.channel, i[1])
-                    elif i[0] == "fileRemove":
-                        await client.send_file(message.channel, i[1])
-                        os.remove(i[1])
-            else:
-                await client.delete_message(message)
-                m_ = await client.send_message(message.channel, d_[1][0][1])
-                await client.add_reaction(m_, '👍')
-                await client.add_reaction(m_, '👎')
-        elif d_[0] == "Socket":
-            found = False
-            for i in rts.rtobj_get():
-                if i[0] == message.server.id and not isinstance(i[1], Music.MusicClass):
-                    found = True
-            if not found and d_[1] != "Music":
-                if d_[1] == "Scrabble":
-                    rts.create_socket([message.server.id, Scrabble.Main(message=message, client=client, obj=rts,
-                                                                        connect=con)])
-                    client.loop.create_task(rts.rtobj_get()[len(rts.rtobj_get()) - 1][1].scrabble_runtime())
-
-            elif d_[1] == "Music":
-                connected = False
+        if d_[0] is not None:
+            if d_[0] == "Single":
+                if d_[1][0][0] != "textPoll":
+                    for i in d_[1]:
+                        if i[0] == "textEmbed":
+                            await client.send_message(message.channel, embed=i[1])
+                        elif i[0] == "text":
+                            await client.send_message(message.channel, i[1])
+                        elif i[0] == "fileKeep":
+                            await client.send_file(message.channel, i[1])
+                        elif i[0] == "fileRemove":
+                            await client.send_file(message.channel, i[1])
+                            os.remove(i[1])
+                else:
+                    await client.delete_message(message)
+                    m_ = await client.send_message(message.channel, d_[1][0][1])
+                    await client.add_reaction(m_, '👍')
+                    await client.add_reaction(m_, '👎')
+            elif d_[0] == "Socket":
+                found = False
                 for i in rts.rtobj_get():
-                    if i[0] == message.server.id and isinstance(i[1], Music.MusicClass):
-                        connected = True
-                if not connected:
-                    if message.author.voice.voice_channel is not None:
-                        rts.create_socket([message.server.id, Music.MusicClass(client, message)])
-                        client.loop.create_task(rts.rtobj_get()[len(rts.rtobj_get()) - 1][1].music_runtime())
-                    else:
-                        await client.send_message(message.channel, "[**Music**]Please join a voice channel before using $music")
-            else:
-                await client.send_message(message.channel, embed=discord.Embed(title="Game Error"
-                                                                               , description="There is already a game "
-                                                                                             "running on the server, "
-                                                                                             "please end it to start "
-                                                                                             "a new one"
-                                                                               ,color=0xe74c3c))
+                    if i[0] == message.server.id and not isinstance(i[1], Music.MusicClass):
+                        found = True
+                if not found and d_[1] != "Music":
+                    if d_[1] == "Scrabble":
+                        rts.create_socket([message.server.id, Scrabble.Main(message=message, client=client, obj=rts,
+                                                                            connect=con)])
+                        client.loop.create_task(rts.rtobj_get()[len(rts.rtobj_get()) - 1][1].scrabble_runtime())
+
+                elif d_[1] == "Music":
+                    connected = False
+                    for i in rts.rtobj_get():
+                        if i[0] == message.server.id and isinstance(i[1], Music.MusicClass):
+                            connected = True
+                    if not connected:
+                        if message.author.voice.voice_channel is not None:
+                            rts.create_socket([message.server.id, Music.MusicClass(client, message)])
+                            client.loop.create_task(rts.rtobj_get()[len(rts.rtobj_get()) - 1][1].music_runtime())
+                        else:
+                            await client.send_message(message.channel, "[**Music**]Please join a voice channel before using $music")
+                else:
+                    await client.send_message(message.channel, embed=discord.Embed(title="Game Error"
+                                                                                   , description="There is already a game "
+                                                                                                 "running on the server, "
+                                                                                                 "please end it to start "
+                                                                                                 "a new one"
+                                                                                   ,color=0xe74c3c))
+        else:
+            pass
     if message.content.startswith("^"):
         found = False
         for i in rts.rtobj_get():
