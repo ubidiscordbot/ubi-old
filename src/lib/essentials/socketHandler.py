@@ -12,9 +12,6 @@ class Objs:
                 self.rt_obj.pop(i2)
                 break
             i2 += 1
-        f = open("server/servers/" + id_ + ".json", "w")
-        f.write(json.dumps([False]))
-        f.close()
 
     def create_socket(self, sk):
         self.rt_obj.append(sk)

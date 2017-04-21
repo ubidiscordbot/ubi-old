@@ -66,7 +66,7 @@ async def on_message(message):
                             connected = True
                     if not connected:
                         if message.author.voice.voice_channel is not None:
-                            rts.create_socket([message.server.id, Music.MusicClass(client, message)])
+                            rts.create_socket([message.server.id, Music.MusicClass(client, message, rts)])
                             client.loop.create_task(rts.rtobj_get()[len(rts.rtobj_get()) - 1][1].music_runtime())
                         else:
                             await client.send_message(message.channel, "[**Music**]Please join a voice channel before using $music")
@@ -105,7 +105,8 @@ async def on_server_join(server):
     f.write(json.dumps({}))
     f.close()
     await client.send_message(server.default_channel, "https://i.cubeupload.com/HIkXQ5.png")
-
+    global mds
+    mds.update(server.id)
 
 @client.event
 async def on_ready():

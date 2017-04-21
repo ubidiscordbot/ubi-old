@@ -35,7 +35,7 @@ def find_name(url):
 
 
 class MusicClass:
-    def __init__(self, client, message):
+    def __init__(self, client, message, obj):
         self.voice = None
         self.client = client
         self.received = []
@@ -46,6 +46,8 @@ class MusicClass:
         self.playing = False
         self.paused = False
         self.votes = []
+        self.obj = obj
+        self.last_use = get_second()
 
     async def music_runtime(self):
         await self.create_voice_client(self.channel)
@@ -120,6 +122,12 @@ class MusicClass:
                         await self.client.send_message(self.message.channel, "[**Music**] There is no song playing")
                     elif not self.paused:
                         await self.client.send_message(self.message.channel, "[**Music**] Song is already playing")
+                elif self.received[0].content.startswith(";music stop"):
+                    if self.player.is_playing():
+                        self.player.stop()
+                    await self.voice.disconnect()
+                    self.obj.close_socket(self.message.server.id)
+                    return None
                 elif self.received[0].content.startswith(";music"):
                     pass
                 self.received.pop(0)
@@ -150,6 +158,12 @@ class MusicClass:
                     except Exception:
                         print("Closing Socket")
                         return None
+            if self.last_use + 1200 < get_second():
+                if self.player.is_playing():
+                    self.player.stop()
+                await self.voice.disconnect()
+                self.obj.close_socket(self.message.server.id)
+                return None
 
     def receive(self, payload):
         self.received.append(payload)

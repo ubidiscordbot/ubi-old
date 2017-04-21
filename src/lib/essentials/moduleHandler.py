@@ -16,6 +16,6 @@ class MdHandle:
         return self.mds
 
     def update(self, server_id):
-        f = open("server/servers/" + str(server_id) + "json", "r")
+        f = open("server/servers/" + str(server_id) + ".json", "r")
         f_ = json.loads(f.read())
         self.mds[str(server_id)] = f_
