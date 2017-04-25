@@ -24,8 +24,8 @@ def main(message, mds):
             **;poll <text>** - starts a basic yes/no poll
             **;define <word>** - grabs the definition of any word
             **;8ball <question>** - inquires the all seeing magic 8ball
-            **;weather <location>** - grabs weather data for specified location
             **;calc <expression>** - evaluates any arithmetic expression
+            **;clear <amount of messages>** - removes the amount of messages specified from a channel
 
         __Music commands__
 

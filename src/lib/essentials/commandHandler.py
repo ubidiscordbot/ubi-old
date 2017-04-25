@@ -7,6 +7,7 @@ import src.lib.modules.poll
 import src.lib.modules.magicball
 import src.lib.modules.define
 import src.lib.modules.help
+import src.lib.modules.clear
 import src.lib.runtimes.games.mathwars
 import src.lib.runtimes.games.reaction
 import src.lib.runtimes.games.scrabble
@@ -55,5 +56,7 @@ def handle(payload, mds, iph):
             return ["Socket", "Music"]
         elif payload.content.lower().startswith(";8ball"):
             return ["Single", src.lib.modules.magicball.main()]
+        elif payload.content.lower().startswith(";clear"):
+            return ["Single", src.lib.modules.clear.main(payload)]
     else:
         return ["Single", io.main(payload)]

@@ -43,6 +43,12 @@ async def on_message(message):
                         elif i[0] == "fileRemove":
                             await client.send_file(message.channel, i[1])
                             os.remove(i[1])
+                        elif i[0] == "purgeText":
+                            messages = client.logs_from(message.channel, limit=i[1] + 1)
+                            async for i2 in messages:
+                                await client.delete_message(i2)
+                            await client.send_message(message.channel, "[**Clear**] Successfully cleared **" + str(i[1]) + "** messages")
+
                 else:
                     await client.delete_message(message)
                     m_ = await client.send_message(message.channel, d_[1][0][1])
